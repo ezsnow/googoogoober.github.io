@@ -142,6 +142,10 @@ h1.selected {
     box-shadow: black 0 0 20px;
 }
 
+/* clickable banner (last-played) */
+.banner.clickable { cursor: pointer; }
+.banner.clickable:hover { transform: scale(1.02); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+
 .rectangle {
     display: flex;
     align-items: flex-end;
@@ -275,6 +279,45 @@ h1.selected {
     display: flex;
     flex-direction: column;
 }
+
+/* Username overlay */
+.username-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.7);
+    z-index: 80;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.username-overlay[aria-hidden="false"] { pointer-events: auto; opacity: 1; }
+.username-box {
+    width: 36vw;
+    background: linear-gradient(180deg,#0f0f0f,#1b1b1b);
+    border-radius: 0.8vw;
+    padding: 2vw;
+    display: flex;
+    flex-direction: column;
+    gap: 1vw;
+    align-items: center;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+}
+.username-box h2 { color: #fff; margin: 0; font-size: 2vw; }
+.username-box .muted { color: #bdbdbd; margin: 0; }
+.username-box input {
+    width: 80%;
+    padding: 0.8vw 1vw;
+    font-size: 1.2vw;
+    border-radius: 0.6vw;
+    border: 0.12vw solid rgba(255,255,255,0.08);
+    background: #0b0b0b;
+    color: #fff;
+}
+.username-actions { display: flex; justify-content: center; width: 100%; }
+.username-actions .close-btn { padding: 0.6vw 1.2vw; }
 .library-header {
     display: flex;
     justify-content: space-between;
@@ -300,6 +343,8 @@ h1.selected {
 }
 .game-card {
     background: linear-gradient(180deg,#222,#151515);
+    background-size: cover;
+    background-position: center center;
     height: 11vw;
     border-radius: 0.6vw;
     display: flex;
@@ -309,7 +354,8 @@ h1.selected {
     cursor: pointer;
     transition: transform 0.18s ease, box-shadow 0.18s ease, border 0.18s ease;
     border: 0.12vw solid transparent;
+    position: relative;
 }
 .game-card:hover { transform: translateY(-0.5vw); box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
 .game-card.selected { border-color: rgba(0,138,0,0.9); box-shadow: 0 12px 34px rgba(0,138,0,0.08); }
-.game-title { font-size: 1.1vw; font-weight: 600; }
+.game-title { font-size: 1.1vw; font-weight: 600; position: absolute; left: 0.8vw; bottom: 0.8vw; background: rgba(0,0,0,0.45); padding: 0.25vw 0.6vw; border-radius: 0.4vw; }

@@ -9,12 +9,10 @@
         <script src="js/script.js"></script>
         <meta content="Xbox 360" property="og:title">
         <meta content="Recreation of the Xbox 360 UI!" property="og:description">
-        <meta content="https://irv77.github.io/Xbox360UI/" property="og:url">
-        <meta content="https://irv77.github.io/Xbox360UI/assets/images/favicon.png" property="og:image">
         <meta content="#008a00" data-react-helmet="true" name="theme-color">
     </head>
     <body>
-        <div class="user"><h3>Vulconcium</h3><img src="assets/images/profile-pic.png"></div>
+        <div class="user"><h3 id="username">Vulconcium</h3><img src="assets/images/profile-pic.png"></div>
         <div class="navbar">
             <h1>gamee</h1>
             <h1 class="one selected" onclick="updateCarousel(0)">home</h1>
@@ -101,14 +99,20 @@
                     </div>
                 </div>
                 <div class="library-grid">
-                    <div class="game-card" data-title="Halo 3"><div class="game-title">Halo 3</div></div>
-                    <div class="game-card" data-title="Gears of War"><div class="game-title">Gears of War</div></div>
-                    <div class="game-card" data-title="Forza Motorsport"><div class="game-title">Forza Motorsport</div></div>
-                    <div class="game-card" data-title="Mass Effect"><div class="game-title">Mass Effect</div></div>
-                    <div class="game-card" data-title="Fable II"><div class="game-title">Fable II</div></div>
-                    <div class="game-card" data-title="Left 4 Dead"><div class="game-title">Left 4 Dead</div></div>
-                    <div class="game-card" data-title="Burnout Paradise"><div class="game-title">Burnout Paradise</div></div>
-                    <div class="game-card" data-title="Bioshock"><div class="game-title">Bioshock</div></div>
+                    <div class="game-card" data-title="hollowKnight"><div class="game-title">Hollow Knight</div></div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- Username overlay (Xbox 360 style) -->
+        <div id="usernameOverlay" class="username-overlay" aria-hidden="true">
+            <div class="username-box" role="dialog" aria-label="Set gamertag">
+                <h2>Welcome</h2>
+                <p class="muted">Enter your gamertag</p>
+                <input id="usernameInput" type="text" maxlength="16" placeholder="Gamertag" />
+                <div class="username-actions">
+                    <button id="usernameSave" class="close-btn">Save</button>
                 </div>
             </div>
         </div>

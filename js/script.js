@@ -77,19 +77,139 @@ function initLibraryHandlers() {
         if (e.key === 'Escape') closeLibrary();
     });
 
-    // Game selection
+    // Game selection: clicking opens the game's page in games/<slug>.html
     const cards = libraryOverlay.querySelectorAll('.game-card');
+    const slugify = (s) => s.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
     cards.forEach(card => {
         card.addEventListener('click', () => {
-            cards.forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
+            const title = card.dataset.title || '';
+            const slug = slugify(title);
+                // determine cover URL from computed style if present
+                let coverUrl = null;
+                try {
+                    const cs = window.getComputedStyle(card);
+                    const bg = cs.backgroundImage || '';
+                    const m = bg.match(/url\(["']?(.*?)["']?\)/);
+                    if (m && m[1] && m[1] !== 'none') coverUrl = m[1];
+                } catch (e) { /* ignore */ }
+
+                if (!coverUrl) coverUrl = `assets/images/games/${slug}.png`;
+
+                // save last-played info
+                try {
+                    localStorage.setItem('lastPlayed', JSON.stringify({ title: title, slug: slug, cover: coverUrl }));
+                } catch (e) { /* ignore storage errors */ }
+
+                // navigate to games/<slug>.html
+                window.location.href = `games/${slug}.html`;
         });
     });
 }
 
+// Apply last-played game to the main banner on the home tile
+function applyLastPlayed() {
+    try {
+        const raw = localStorage.getItem('lastPlayed');
+        if (!raw) return;
+        const obj = JSON.parse(raw);
+        if (!obj) return;
+
+        const banner = document.querySelector('.tiles .tile .right-side .banner');
+        if (!banner) return;
+
+        // set cover if available
+        if (obj.cover) {
+            banner.style.background = `url('${obj.cover}') center center / cover no-repeat #1d1d1d`;
+        }
+
+        // set title inside banner
+        let h = banner.querySelector('h2');
+        if (!h) {
+            h = document.createElement('h2');
+            banner.appendChild(h);
+        }
+        h.textContent = obj.title || '';
+
+        // make banner clickable to return to last-played game
+        banner.classList.add('clickable');
+        banner.setAttribute('role', 'button');
+        banner.setAttribute('tabindex', '0');
+        banner.onclick = () => { window.location.href = `games/${obj.slug || obj.title.toLowerCase().replace(/[^\w\s-]/g,'').trim().replace(/\s+/g,'-')}.html`; };
+        banner.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') banner.onclick(); });
+    } catch (e) {
+        // ignore
+    }
+}
+
+    // Load cover images for game cards, trying multiple filename variants and extensions
+    function applyGameCovers() {
+        const cards = document.querySelectorAll('.game-card');
+        const slugify = (s) => s.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
+        const exts = ['png','jpg','jpeg','webp'];
+        cards.forEach(card => {
+            const titleRaw = card.dataset.title || card.textContent || '';
+            const title = String(titleRaw).trim();
+            const slug = slugify(title);
+            const slugNoHyphen = slug.replace(/-/g, '');
+            const compactTitle = title.toLowerCase().replace(/[^\w]/g, '');
+            const variants = [slug, slugNoHyphen, compactTitle];
+
+            variants.forEach(v => {
+                if (!v) return;
+                exts.forEach(ext => {
+                    if (card.dataset.coverLoaded) return;
+                    const path = `assets/images/games/${v}.${ext}`;
+                    const img = new Image();
+                    img.onload = () => {
+                        if (!card.dataset.coverLoaded) {
+                            card.style.backgroundImage = `url('${path}')`;
+                            card.dataset.coverLoaded = 'true';
+                        }
+                    };
+                    img.onerror = () => { /* try next */ };
+                    img.src = path;
+                });
+            });
+        });
+    }
+
 // Initialize handlers once DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initLibraryHandlers);
+    document.addEventListener('DOMContentLoaded', () => { initUsername(); initLibraryHandlers(); applyGameCovers(); applyLastPlayed(); });
 } else {
-    initLibraryHandlers();
+    initUsername(); initLibraryHandlers(); applyGameCovers(); applyLastPlayed();
+}
+
+// --- Username prompt ---
+function initUsername() {
+    const stored = localStorage.getItem('xboxUsername');
+    const usernameEl = document.getElementById('username');
+    const overlay = document.getElementById('usernameOverlay');
+    const input = document.getElementById('usernameInput');
+    const saveBtn = document.getElementById('usernameSave');
+
+    const applyName = (name) => {
+        if (usernameEl) usernameEl.textContent = name;
+    };
+
+    if (stored) {
+        applyName(stored);
+        if (overlay) overlay.setAttribute('aria-hidden', 'true');
+        return;
+    }
+
+    if (!overlay || !input || !saveBtn) return;
+    overlay.setAttribute('aria-hidden', 'false');
+    input.focus();
+
+    const save = () => {
+        const val = input.value.trim();
+        if (!val) return;
+        localStorage.setItem('xboxUsername', val);
+        applyName(val);
+        overlay.setAttribute('aria-hidden', 'true');
+    };
+
+    saveBtn.addEventListener('click', save);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
 }
