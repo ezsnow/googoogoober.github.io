@@ -888,7 +888,17 @@
         lockOrientationIfSupported();
       });
     </script>
-	<!-- Load Main Game Runner JS File -->
+    <!-- Load Main Game Runner JS File -->
+    <script>
+      // Override where the Emscripten loader locates files.
+      // Replace the URLs below with your real CDN links.
+      Module = Module || {};
+      Module.locateFile = function(path, prefix) {
+        if (path === "runner.data") return "https://media.githubusercontent.com/media/googoogoob/googoogoob.github.io/refs/heads/main/games/undertale/runner.data";
+        if (path === "game.unx") return "https://media.githubusercontent.com/media/googoogoob/googoogoob.github.io/refs/heads/main/games/undertale/game.unx";
+        return prefix + path;
+      };
+    </script>
     <script async type="text/javascript" src="runner.js"></script>
   </body>
 </html>
