@@ -183,9 +183,9 @@ function applyLastPlayed() {
 
 // Initialize handlers once DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { initUsername(); initLibraryHandlers(); applyGameCovers(); applyLastPlayed(); });
+    document.addEventListener('DOMContentLoaded', () => { initUsername(); initLibraryHandlers(); applyGameCovers(); applyLastPlayed(); initPowerOffHandler(); });
 } else {
-    initUsername(); initLibraryHandlers(); applyGameCovers(); applyLastPlayed();
+    initUsername(); initLibraryHandlers(); applyGameCovers(); applyLastPlayed(); initPowerOffHandler();
 }
 
 // --- Username prompt ---
@@ -221,3 +221,27 @@ function initUsername() {
     saveBtn.addEventListener('click', save);
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
 }
+
+// Navigate to off.html when powering off, and allow keyboard activation
+function powerOff() {
+    // Use a relative path to work both when served and when opened via file://
+    try { console.log('powerOff() called'); } catch (e) {}
+    window.location.href = 'off.html';
+}
+
+function initPowerOffHandler() {
+    const powerTile = document.querySelector('.square.eight');
+    if (!powerTile) return;
+    powerTile.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            powerOff();
+        }
+    });
+    // Also add a programmatic click handler in case inline handlers are blocked
+    powerTile.addEventListener('click', (e) => { powerOff(); });
+}
+
+// Ensure the function is available on the global `window` for inline handlers
+try { window.powerOff = powerOff; window.initPowerOffHandler = initPowerOffHandler; } catch (e) {}
+
