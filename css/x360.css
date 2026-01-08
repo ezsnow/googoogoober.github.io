@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'x360';
+    /* font file is at project root assets/X360.ttf (case-sensitive on some hosts) */
+    src: url('../assets/X360.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Apply only when this stylesheet is included */
+html, body {
+    font-family: 'x360', sans-serif;
+}
