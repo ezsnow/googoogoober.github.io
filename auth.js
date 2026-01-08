@@ -28,11 +28,11 @@
     // must prompt path
     const pw = await getStoredPassword();
       if(!pw){
-        alert('Site authentication unavailable. Access blocked.');
+        alert('Site authentication unavailable. Access blocked');
         location.href = '/fail.html';
         return false;
       }
-    let attempt = prompt('Enter site password:');
+    let attempt = prompt('pasword pls:');
     if(attempt === null){
       // ensure next visit prompts again
       localStorage.setItem(VISIT_KEY, '1');
@@ -46,7 +46,7 @@
       return true;
     }
     // incorrect - force next visit to prompt
-    alert('Incorrect password');
+    alert('unsigma');
     localStorage.setItem(VISIT_KEY, '1');
     localStorage.removeItem(AUTH_KEY);
       location.href = '/fail.html';
